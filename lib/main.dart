@@ -5,7 +5,6 @@ import 'screens/home.dart';
 import 'screens/status.dart';
 import 'screens/settings.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
