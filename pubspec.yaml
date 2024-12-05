@@ -47,9 +47,9 @@ dev_dependencies:
 
 flutter_launcher_icons:
   android: true
-  image_path: "assets/logos/ltn.png"
-  adaptive_icon_background: "assets/logos/ltn.png"
-  adaptive_icon_foreground: "assets/images/ltn.png"
+  image_path: "assets/ltn.png"
+  adaptive_icon_background: "assets/ltn.png"
+  adaptive_icon_foreground: "assets/ltn.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -70,7 +70,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/logos/
+    - assets/ltn.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
