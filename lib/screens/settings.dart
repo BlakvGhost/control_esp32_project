@@ -1,3 +1,4 @@
+import 'package:control/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,6 +11,7 @@ class SettingsScreen extends StatefulWidget {
 
 class SettingsScreenState extends State<SettingsScreen> {
   TextEditingController ipController = TextEditingController();
+  TextEditingController portController = TextEditingController();
 
   @override
   void initState() {
@@ -19,14 +21,16 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   void loadIp() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    ipController.text = prefs.getString('esp32_ip') ?? '192.168.1.1:3333';
+    ipController.text = prefs.getString('esp32_ip') ?? '192.168.1.1';
+    ipController.text = prefs.getString('esp32_port') ?? '3333';
   }
 
   void saveIp() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('esp32_ip', ipController.text);
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('IP sauvegardée !')));
+    await prefs.setString('esp32_port', portController.text);
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('IP et Port sauvegardée !')));
   }
 
   @override
@@ -42,10 +46,12 @@ class SettingsScreenState extends State<SettingsScreen> {
               decoration: const InputDecoration(labelText: 'Adresse IP ESP32'),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: saveIp,
-              child: const Text('Enregistrer'),
+            TextField(
+              controller: ipController,
+              decoration: const InputDecoration(labelText: 'Port ESP32'),
             ),
+            const SizedBox(height: 20),
+            CustomElevatedButton(label: 'Enregistrer', onPressed: saveIp)
           ],
         ),
       ),

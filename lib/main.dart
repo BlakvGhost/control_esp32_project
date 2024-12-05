@@ -1,5 +1,6 @@
 import 'package:control/themes/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'screens/home.dart';
 import 'screens/status.dart';
 import 'screens/settings.dart';
@@ -33,9 +34,9 @@ class MainScreen extends StatefulWidget {
 class MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   final List<Widget> _screens = [
-    HomeScreen(),
-    StatusScreen(),
-    SettingsScreen()
+    const HomeScreen(),
+    const StatusScreen(),
+    const SettingsScreen()
   ];
 
   @override
@@ -50,10 +51,12 @@ class MainScreenState extends State<MainScreen> {
           });
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
-          BottomNavigationBarItem(icon: Icon(Icons.lightbulb), label: 'États'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: 'Configuration'),
+              icon: Icon(PhosphorIconsDuotone.houseSimple), label: 'Accueil'),
+          BottomNavigationBarItem(
+              icon: Icon(PhosphorIconsDuotone.lightbulb), label: 'États'),
+          BottomNavigationBarItem(
+              icon: Icon(PhosphorIconsDuotone.gearSix), label: 'Configuration'),
         ],
       ),
     );
