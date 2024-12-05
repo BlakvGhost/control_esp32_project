@@ -1,3 +1,4 @@
+import 'package:control/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../services/api_service.dart';
@@ -34,7 +35,35 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _updateState(Function action, Future<void> Function() fetchState) async {
-    await action();
+    final res = await action();
+
+    if (!res) {
+      const message =
+          "Erreur de connexion au serveur, veuillez vérifier ou configurer l'adresse ip et le port de l'ESP32";
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(
+                PhosphorIconsDuotone.info,
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  message,
+                  style: TextStyle(color: AppTheme.whiteColor),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 8,
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Color.fromARGB(255, 114, 29, 22),
+        ),
+      );
+    }
+
     await fetchState();
   }
 
@@ -43,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Actions'),
+        elevation: 22,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

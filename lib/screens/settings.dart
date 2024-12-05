@@ -1,5 +1,7 @@
+import 'package:control/themes/app_theme.dart';
 import 'package:control/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -22,23 +24,46 @@ class SettingsScreenState extends State<SettingsScreen> {
   void loadIp() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     ipController.text = prefs.getString('esp32_ip') ?? '192.168.1.1';
-    ipController.text = prefs.getString('esp32_port') ?? '3333';
+    portController.text = prefs.getString('esp32_port') ?? '3333';
   }
 
   void saveIp() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('esp32_ip', ipController.text);
     await prefs.setString('esp32_port', portController.text);
+
     ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('IP et Port sauvegardée !')));
+      const SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              PhosphorIconsDuotone.checkCircle,
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'IP et Port sauvegardée !',
+                style: TextStyle(color: AppTheme.whiteColor),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 8,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: AppTheme.primaryColor,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Configuration')),
+      appBar: AppBar(
+        title: const Text('Configuration'),
+        elevation: 22,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(22.0),
         child: Column(
           children: [
             TextField(
@@ -47,10 +72,10 @@ class SettingsScreenState extends State<SettingsScreen> {
             ),
             const SizedBox(height: 20),
             TextField(
-              controller: ipController,
+              controller: portController,
               decoration: const InputDecoration(labelText: 'Port ESP32'),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 40),
             CustomElevatedButton(label: 'Enregistrer', onPressed: saveIp)
           ],
         ),

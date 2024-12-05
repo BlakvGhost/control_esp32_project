@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:ui';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,34 +11,25 @@ class ApiService {
     return 'http://$ip:$port';
   }
 
-  /// Affiche un toast en cas d'erreur
-  static void _showErrorToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: const Color(0xFF444444),
-      textColor: const Color(0xFFFFFFFF),
-    );
-  }
-
   /// Passe en mode auto
-  static Future<void> setModeAuto() async {
+  static Future<bool> setModeAuto() async {
     try {
       final baseUrl = await _getBaseUrl();
       await http.get(Uri.parse('$baseUrl/mode/auto'));
+      return true;
     } catch (e) {
-      _showErrorToast("Erreur : Impossible de passer en mode auto.");
+      return false;
     }
   }
 
   /// Passe en mode manuel
-  static Future<void> setModeManual() async {
+  static Future<bool> setModeManual() async {
     try {
       final baseUrl = await _getBaseUrl();
       await http.get(Uri.parse('$baseUrl/mode/manuel'));
+      return true;
     } catch (e) {
-      _showErrorToast("Erreur : Impossible de passer en mode manuel.");
+      return false;
     }
   }
 
@@ -50,30 +39,31 @@ class ApiService {
       final baseUrl = await _getBaseUrl();
       final response = await http.get(Uri.parse('$baseUrl/mode/etat'));
       final data = jsonDecode(response.body);
-      return data['etat'] ?? 'off';
+      return data['etat'] ?? 'manuel';
     } catch (e) {
-      _showErrorToast("Erreur : Impossible de récupérer l'état du mode.");
-      return 'off'; // Retourne "off" par défaut
+      return 'manuel'; // Retourne "off" par défaut
     }
   }
 
   /// Allume les lampes internes
-  static Future<void> turnOnInternal() async {
+  static Future<bool> turnOnInternal() async {
     try {
       final baseUrl = await _getBaseUrl();
       await http.get(Uri.parse('$baseUrl/lamp/in/on'));
+      return true;
     } catch (e) {
-      _showErrorToast("Erreur : Impossible d'allumer les lampes internes.");
+      return false;
     }
   }
 
   /// Éteint les lampes internes
-  static Future<void> turnOffInternal() async {
+  static Future<bool> turnOffInternal() async {
     try {
       final baseUrl = await _getBaseUrl();
       await http.get(Uri.parse('$baseUrl/lamp/in/off'));
+      return true;
     } catch (e) {
-      _showErrorToast("Erreur : Impossible d'éteindre les lampes internes.");
+      return false;
     }
   }
 
@@ -85,8 +75,6 @@ class ApiService {
       final data = jsonDecode(response.body);
       return data['etat'] ?? 'off';
     } catch (e) {
-      _showErrorToast(
-          "Erreur : Impossible de récupérer l'état des lampes internes.");
       return 'off'; // Retourne "off" par défaut
     }
   }
@@ -99,8 +87,18 @@ class ApiService {
       final data = jsonDecode(response.body);
       return data['etat'] ?? 'off';
     } catch (e) {
-      _showErrorToast(
-          "Erreur : Impossible de récupérer l'état des lampes externes.");
+      return 'off'; // Retourne "off" par défaut
+    }
+  }
+
+  /// Récupère l'état des alarms
+  static Future<String> getAlarmState() async {
+    try {
+      final baseUrl = await _getBaseUrl();
+      final response = await http.get(Uri.parse('$baseUrl/alarm/etat'));
+      final data = jsonDecode(response.body);
+      return data['etat'] ?? 'off';
+    } catch (e) {
       return 'off'; // Retourne "off" par défaut
     }
   }

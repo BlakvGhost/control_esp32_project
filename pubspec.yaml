@@ -39,7 +39,6 @@ dependencies:
   http: ^1.2.2
   google_fonts: ^6.2.1
   phosphor_flutter: ^2.1.0
-  fluttertoast: ^8.2.8
 
 dev_dependencies:
   flutter_test:

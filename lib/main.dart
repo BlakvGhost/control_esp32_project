@@ -5,6 +5,7 @@ import 'screens/home.dart';
 import 'screens/status.dart';
 import 'screens/settings.dart';
 
+
 void main() {
   runApp(const MyApp());
 }
@@ -44,6 +45,7 @@ class MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        elevation: 22,
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
