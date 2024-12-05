@@ -14,6 +14,7 @@ class StatusScreenState extends State<StatusScreen> {
   String externalState = 'off';
   String modeState = 'manuel';
   String alarmState = 'off';
+  bool isLoading = false; // Indicateur de chargement
 
   @override
   void initState() {
@@ -22,6 +23,12 @@ class StatusScreenState extends State<StatusScreen> {
   }
 
   Future<void> fetchData() async {
+    if (!mounted) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
     try {
       final internal = await ApiService.getInternalState();
       final external = await ApiService.getExternalState();
@@ -35,6 +42,7 @@ class StatusScreenState extends State<StatusScreen> {
           externalState = external;
           modeState = mode;
           alarmState = alarm;
+          isLoading = false;
         });
       }
     } catch (e) {
@@ -45,6 +53,9 @@ class StatusScreenState extends State<StatusScreen> {
             backgroundColor: Colors.red,
           ),
         );
+        setState(() {
+          isLoading = false;
+        });
       }
     }
   }
@@ -53,8 +64,37 @@ class StatusScreenState extends State<StatusScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('États des systèmes'),
-        elevation: 4,
+        title: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "EFTP_2024_LTN",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "États des systèmes",
+              style: TextStyle(color: Colors.grey, fontSize: 16),
+            ),
+          ],
+        ),
+        elevation: 22,
+        toolbarHeight: 80,
+        automaticallyImplyLeading: true,
+        actions: [
+          IconButton(
+            icon: isLoading
+                ? const CircularProgressIndicator(
+                    color: Colors.white,
+                  )
+                : const Icon(
+                    PhosphorIconsDuotone.arrowCounterClockwise,
+                  ),
+            onPressed: isLoading ? null : fetchData,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

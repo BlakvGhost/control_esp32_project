@@ -67,6 +67,50 @@ class ApiService {
     }
   }
 
+  /// Allume les lampes externes
+  static Future<bool> turnOnExternal() async {
+    try {
+      final baseUrl = await _getBaseUrl();
+      await http.get(Uri.parse('$baseUrl/lamp/out/on'));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Éteint les lampes externes
+  static Future<bool> turnOffExternal() async {
+    try {
+      final baseUrl = await _getBaseUrl();
+      await http.get(Uri.parse('$baseUrl/lamp/out/off'));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Allume les lampes externes
+  static Future<bool> turnOnAlarm() async {
+    try {
+      final baseUrl = await _getBaseUrl();
+      await http.get(Uri.parse('$baseUrl/lamp/alarm/on'));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Éteint les lampes externes
+  static Future<bool> turnOffAlarm() async {
+    try {
+      final baseUrl = await _getBaseUrl();
+      await http.get(Uri.parse('$baseUrl/lamp/alarm/off'));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   /// Récupère l'état des lampes internes
   static Future<String> getInternalState() async {
     try {
