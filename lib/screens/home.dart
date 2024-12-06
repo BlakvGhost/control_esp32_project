@@ -2,6 +2,7 @@ import 'package:control/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../services/api_service.dart';
+import 'dart:async';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,20 +17,29 @@ class _HomeScreenState extends State<HomeScreen> {
   String externalLampState = ''; // État des lampes externes : "on" ou "off"
   String alarmState = ''; // État de l'alarme : "on" ou "off"
   bool isLoading = false; // Indicateur de chargement
+  Timer? _timer; // Timer pour le rafraîchissement en temps réel
 
   @override
   void initState() {
     super.initState();
     _fetchStates(); // Charger les états initiaux
+    _startRealTimeFetch(); // Démarrer le rafraîchissement en temps réel
   }
 
-  Future<void> _fetchStates() async {
+  @override
+  void dispose() {
+    _timer?.cancel(); // Arrêter le timer lorsque le widget est démonté
+    super.dispose();
+  }
+
+  Future<void> _fetchStates({bool showLoader = true}) async {
     if (!mounted) return;
 
-    setState(() {
-      isLoading = true;
-    });
-
+    if (showLoader) {
+      setState(() {
+        isLoading = true;
+      });
+    }
     // Récupérer les états depuis l'API
     final mode = await ApiService.getModeState();
     final internalLamp = await ApiService.getInternalState();
@@ -42,9 +52,15 @@ class _HomeScreenState extends State<HomeScreen> {
         internalLampState = internalLamp; // "on" ou "off"
         externalLampState = externalLamp; // "on" ou "off"
         alarmState = alarm; // "on" ou "off"
-        isLoading = false; // Fin du chargement
+        if (showLoader) isLoading = false; // Fin du chargement
       });
     }
+  }
+
+  void _startRealTimeFetch() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      _fetchStates(showLoader: false); // Rafraîchir sans afficher le loader
+    });
   }
 
   void _updateState(Function action, Future<void> Function() fetchState) async {
@@ -58,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (!res) {
       const message =
-          "Erreur de connexion au serveur, veuillez vérifier ou configurer l'adresse ip et le port de l'ESP32";
+          "Erreur de connexion au serveur, veuillez vérifier ou configurer l'adresse IP et le port de l'ESP32";
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -128,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 : const Icon(
                     PhosphorIconsDuotone.arrowCounterClockwise,
                   ),
-            onPressed: isLoading ? null : _fetchStates,
+            onPressed: isLoading ? null : () => _fetchStates(),
           ),
         ],
       ),
@@ -179,7 +195,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: internalLampState == 'off'
                       ? 'Lampes int. OFF'
                       : 'Lampes int. ON',
-                  icon: PhosphorIconsDuotone.lightbulb,
+                  icon: internalLampState == 'off'
+                      ? PhosphorIconsDuotone.lightbulb
+                      : PhosphorIconsDuotone.lightbulbFilament,
                   isActive: internalLampState == 'on',
                   action: () => _updateState(
                     internalLampState == 'on'
@@ -192,7 +210,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: externalLampState == 'off'
                       ? 'Lampes ext. OFF'
                       : 'Lampes ext. ON',
-                  icon: PhosphorIconsDuotone.lightbulb,
+                  icon: externalLampState == 'off'
+                      ? PhosphorIconsDuotone.lightbulb
+                      : PhosphorIconsDuotone.lightbulbFilament,
                   isActive: externalLampState == 'on',
                   action: () => _updateState(
                     externalLampState == 'on'
@@ -203,7 +223,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 ActionButton(
                   label: alarmState == 'off' ? 'Alarme OFF' : 'Alarme ON',
-                  icon: PhosphorIconsDuotone.bell,
+                  icon: alarmState == 'on'
+                      ? PhosphorIconsDuotone.bellRinging
+                      : PhosphorIconsDuotone.bell,
                   isActive: alarmState == 'on',
                   action: () => _updateState(
                     alarmState == 'on'
@@ -214,7 +236,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 ActionButton(
                   label: currentMode == 'manuel' ? 'Mode Manuel' : 'Mode Auto',
-                  icon: PhosphorIconsDuotone.gearSix,
+                  icon: currentMode == 'auto'
+                      ? PhosphorIconsDuotone.gearSix
+                      : PhosphorIconsDuotone.hand,
                   isActive: currentMode == 'auto',
                   action: () => _updateState(
                     currentMode == 'auto'

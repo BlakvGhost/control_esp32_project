@@ -93,7 +93,7 @@ class ApiService {
   static Future<bool> turnOnAlarm() async {
     try {
       final baseUrl = await _getBaseUrl();
-      await http.get(Uri.parse('$baseUrl/lamp/alarm/on'));
+      await http.get(Uri.parse('$baseUrl/alarm/on'));
       return true;
     } catch (e) {
       return false;
@@ -104,7 +104,7 @@ class ApiService {
   static Future<bool> turnOffAlarm() async {
     try {
       final baseUrl = await _getBaseUrl();
-      await http.get(Uri.parse('$baseUrl/lamp/alarm/off'));
+      await http.get(Uri.parse('$baseUrl/alarm/off'));
       return true;
     } catch (e) {
       return false;

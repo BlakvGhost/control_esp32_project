@@ -44,6 +44,7 @@ class MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(66, 80, 74, 74),
         elevation: 22,
         currentIndex: _currentIndex,
         onTap: (index) {
