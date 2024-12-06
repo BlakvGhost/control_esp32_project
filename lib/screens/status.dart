@@ -29,7 +29,7 @@ class StatusScreenState extends State<StatusScreen> {
   void startRealTimeUpdates() {
     // Simule les mises à jour en temps réel toutes les 5 secondes
     _timer = Timer.periodic(const Duration(seconds: 5), (_) {
-      fetchData(); // Rafraîchit les données
+      fetchData(showLoader: false); // Rafraîchit les données
     });
   }
 
