@@ -12,10 +12,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String currentMode = ''; // Mode actif : "auto" ou "manuel"
-  String internalLampState = ''; // État des lampes internes : "on" ou "off"
-  String externalLampState = ''; // État des lampes externes : "on" ou "off"
-  String alarmState = ''; // État de l'alarme : "on" ou "off"
+  String currentMode = 'manuel'; // Mode actif : "auto" ou "manuel"
+  String internalLampState = 'off'; // État des lampes internes : "on" ou "off"
+  String externalLampState = 'off'; // État des lampes externes : "on" ou "off"
+  String alarmState = 'off'; // État de l'alarme : "on" ou "off"
   bool isLoading = false; // Indicateur de chargement
   Timer? _timer; // Timer pour le rafraîchissement en temps réel
 

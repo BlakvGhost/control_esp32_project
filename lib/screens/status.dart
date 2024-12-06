@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../services/api_service.dart';
@@ -14,20 +16,31 @@ class StatusScreenState extends State<StatusScreen> {
   String externalState = 'off';
   String modeState = 'manuel';
   String alarmState = 'off';
-  bool isLoading = false; // Indicateur de chargement
+  bool isLoading = false;
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
     fetchData();
+    startRealTimeUpdates();
   }
 
-  Future<void> fetchData() async {
+  void startRealTimeUpdates() {
+    // Simule les mises à jour en temps réel toutes les 5 secondes
+    _timer = Timer.periodic(const Duration(seconds: 5), (_) {
+      fetchData(); // Rafraîchit les données
+    });
+  }
+
+  Future<void> fetchData({bool showLoader = true}) async {
     if (!mounted) return;
 
-    setState(() {
-      isLoading = true;
-    });
+    if (showLoader) {
+      setState(() {
+        isLoading = true;
+      });
+    }
 
     try {
       final internal = await ApiService.getInternalState();
@@ -42,7 +55,7 @@ class StatusScreenState extends State<StatusScreen> {
           externalState = external;
           modeState = mode;
           alarmState = alarm;
-          isLoading = false;
+          if (showLoader) isLoading = false;
         });
       }
     } catch (e) {
@@ -58,6 +71,12 @@ class StatusScreenState extends State<StatusScreen> {
         });
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // Arrêter le timer lorsque le widget est démonté
+    super.dispose();
   }
 
   @override
